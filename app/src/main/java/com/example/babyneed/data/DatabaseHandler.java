@@ -5,14 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.icu.text.DateFormat;
+import android.os.Build;
 import android.util.Log;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.example.babyneed.model.BabyItem;
 import com.example.babyneed.utils.Constant;
@@ -74,6 +75,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     //Get a single baby item
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public BabyItem getBabyItem(int id) {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -99,9 +101,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             babyItem.setItemQuantity(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constant.KEY_ITEM_QUANTITY))));
 
             //Convert timestamp to date
-            Timestamp ts = new Timestamp(cursor.getColumnIndex(Constant.KEY_ITEM_DATE_ADDED));
-            Date date = new Date(ts.getTime());
-            babyItem.setDateItemAdded(String.valueOf(date));
+            DateFormat dateFormat = DateFormat.getDateInstance();
+            String formattedDate= dateFormat.format(new Date(cursor.getLong(cursor.getColumnIndex(Constant.KEY_ITEM_DATE_ADDED))).getTime());
+            babyItem.setDateItemAdded(String.valueOf(formattedDate));
         }
         // return babyItem
         return babyItem;
