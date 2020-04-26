@@ -2,6 +2,8 @@ package com.example.babyneed;
 
 import android.os.Bundle;
 
+import com.example.babyneed.data.DatabaseHandler;
+import com.example.babyneed.model.BabyItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -9,11 +11,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private AlertDialog.Builder builder;
@@ -23,12 +28,21 @@ public class MainActivity extends AppCompatActivity {
     private EditText itemQuantity;
     private EditText itemColor;
     private EditText itemSize;
+    private DatabaseHandler databaseHandler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        databaseHandler = new DatabaseHandler(this);
+        //Check if item was saved
+        List<BabyItem>items= databaseHandler.getAllBabyItems();
+        for(BabyItem item:items)
+        {
+            Log.d("SavedItem","Getall"+item.getDateItemAdded());
+        }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -46,28 +60,57 @@ public class MainActivity extends AppCompatActivity {
 
     private void createPopupDialog() {
         builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.popup,null);
+        View view = getLayoutInflater().inflate(R.layout.popup, null);
 
         saveButton = view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveItem();
+                //Pass view so snackbar would be attached to a view
+                if(!babyItem.getText().toString().isEmpty()
+                        &&!itemColor.getText().toString().isEmpty()
+                        &&!itemQuantity.getText().toString().isEmpty()
+                        &&!itemSize.getText().toString().isEmpty()
+                ){
+                    saveItem(v);
+                }
+                else
+                    {
+                        Snackbar.make(v,"Please make sure all fields are filled correctly",Snackbar.LENGTH_SHORT).show();
+                    }
+
             }
         });
-        babyItem =  view.findViewById(R.id.babyItem);
+        babyItem = view.findViewById(R.id.babyItem);
         itemQuantity = view.findViewById(R.id.itemQuantity);
         itemColor = view.findViewById(R.id.itemColor);
-        itemSize =view. findViewById(R.id.itemSize);
+        itemSize = view.findViewById(R.id.itemSize);
 
         builder.setView(view);
         dialog = builder.create();//Create dialog object
         dialog.show();
     }
 
-    private void saveItem() {
-        // Save each baby item to db
-        //Move to next screen..detail
+    private void saveItem(View view) {
+        //Create baby item object
+        BabyItem item = new BabyItem();
+
+        //Get values from EditTextView
+        String newBabyItem = babyItem.getText().toString().trim();
+        String newItemColor = itemColor.getText().toString().trim();
+        int newItemQuantity = Integer.parseInt(itemQuantity.getText().toString().trim());
+        int newItemSize = Integer.parseInt(itemSize.getText().toString().trim());
+        //Assign values to baby item object
+        item.setItemName(newBabyItem);
+        item.setItemColor(newItemColor);
+        item.setItemQuantity(newItemQuantity);
+        item.setItemSize(newItemSize);
+
+        //Save item to database
+        databaseHandler.addBabyItem(item);
+
+        //Display snackbar after save
+        Snackbar.make(view,"Item Saved",Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
