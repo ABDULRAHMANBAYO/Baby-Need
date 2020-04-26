@@ -10,7 +10,7 @@ public class Constant {
     public static final String KEY_ID = "id";
     public static final String KEY_ITEM_QUANTITY = "item_quantity";
     public static final String KEY_ITEM_SIZE = "itemSize";
-    public static final String KEY_ITEM_NAME = "name";
+    public static final String KEY_ITEM_NAME = "baby_item_name";
     public static final String KEY_ITEM_COLOR = "itemColor";
     public static final String KEY_ITEM_DATE_ADDED = "dateItemAdded";
 }
