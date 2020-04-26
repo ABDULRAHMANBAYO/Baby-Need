@@ -5,14 +5,25 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
+    private AlertDialog.Builder builder;
+    private AlertDialog dialog;
+    private Button saveButton;
+    private EditText babyItem;
+    private EditText itemQuantity;
+    private EditText itemColor;
+    private EditText itemSize;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,14 +32,31 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                createPopupDialog();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
+    }
+
+    private void createPopupDialog() {
+        builder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.popup,null);
+
+        saveButton = view.findViewById(R.id.saveButton);
+        babyItem =  view.findViewById(R.id.babyItem);
+        itemQuantity = view.findViewById(R.id.itemQuantity);
+        itemColor = view.findViewById(R.id.itemColor);
+        itemSize =view. findViewById(R.id.itemSize);
+
+        builder.setView(view);
+        dialog = builder.create();//Create dialog object
+        dialog.show();
     }
 
     @Override
