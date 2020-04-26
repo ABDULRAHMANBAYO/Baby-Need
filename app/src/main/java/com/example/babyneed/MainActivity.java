@@ -49,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.popup,null);
 
         saveButton = view.findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveItem();
+            }
+        });
         babyItem =  view.findViewById(R.id.babyItem);
         itemQuantity = view.findViewById(R.id.itemQuantity);
         itemColor = view.findViewById(R.id.itemColor);
@@ -57,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
         builder.setView(view);
         dialog = builder.create();//Create dialog object
         dialog.show();
+    }
+
+    private void saveItem() {
+        // Save each baby item to db
+        //Move to next screen..detail
     }
 
     @Override
