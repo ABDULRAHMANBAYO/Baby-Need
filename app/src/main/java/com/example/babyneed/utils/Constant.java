@@ -6,7 +6,7 @@ public class Constant {
     public static final String DATABASE_NAME = "babyItem_db";
     public static final String TABLE_NAME = "babyItem";
 
-    //Contact table column name
+    // Table column name
     public static final String KEY_ID = "id";
     public static final String KEY_ITEM_QUANTITY = "item_quantity";
     public static final String KEY_ITEM_SIZE = "itemSize";
