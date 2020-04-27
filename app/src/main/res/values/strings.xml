@@ -11,7 +11,7 @@
     <string name="hint_itemColor"> Color</string>
     <string name="hint_itemSize">Size</string>
     <string name="save_button">SAVE</string>
-    <string name="sure_text">Are you sure you want to delete this item???</string>
+    <string name="sure_text">Are you sure you???</string>
     <string name="no">NO</string>
     <string name="yes">YES</string>
 </resources>
