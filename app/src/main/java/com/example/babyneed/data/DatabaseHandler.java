@@ -181,8 +181,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String countBabyItem = "SELECT * FROM " + Constant.TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countBabyItem, null);
-        cursor.close();
+
         return cursor.getCount();
+//        cursor.close();
     }
 
 }
