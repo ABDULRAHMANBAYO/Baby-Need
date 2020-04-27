@@ -16,6 +16,7 @@
                 android:text="@string/sure_text"
                 android:layout_centerHorizontal="true"
                 android:padding="6dp"
+                android:textSize="17sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </TextView>
@@ -24,19 +25,22 @@
                 android:id="@+id/confirm_no_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="19dp"
+                android:layout_marginTop="40dp"
                 android:background="@color/colorAccent"
-                android:text="@string/no"></Button>
+                android:text="@string/no">
+
+            </Button>
 
             <Button
                 android:id="@+id/confirm_yes_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="19dp"
-                android:layout_marginRight="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="40dp"
                 android:background="@color/colorAccent"
-                android:text="@string/yes"></Button>
+                android:text="@string/yes">
+
+            </Button>
 
 
         </RelativeLayout>
