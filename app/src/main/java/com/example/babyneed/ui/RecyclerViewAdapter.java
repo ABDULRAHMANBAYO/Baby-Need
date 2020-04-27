@@ -2,16 +2,24 @@ package com.example.babyneed.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.babyneed.ListActivity;
+import com.example.babyneed.MainActivity;
 import com.example.babyneed.R;
 import com.example.babyneed.data.DatabaseHandler;
 import com.example.babyneed.model.BabyItem;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -86,7 +94,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             switch (v.getId())
             {
                 case R.id.editButton:
-//                    editItem();
+                    position = getAdapterPosition();
+                    BabyItem babyitem = babyItemList.get(position);
+                    editItem(babyitem);
                     break;
                 case R.id.deleteButton:
                    position = getAdapterPosition();
@@ -124,6 +134,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             yesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     DatabaseHandler db = new DatabaseHandler(context);
                     db.deleteBabyItem(babyItemId);
                     babyItemList.remove(getAdapterPosition());
@@ -137,11 +148,77 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
         }
-//        private void editItem() {
-//            DatabaseHandler db = new DatabaseHandler(context);
-//            db.updateBabyItem();
-//        }
+        private void editItem(final BabyItem newBabyItem) {
+
+            builder = new AlertDialog.Builder(context);
+            inflater = LayoutInflater.from(context);
+
+            View v = inflater.inflate(R.layout.popup,null);
+
+            Button saveButton;
+             final EditText babyItemName;
+            final EditText babyItemQuantity;
+            final EditText babyItemColor;
+            final EditText babyItemSize;
+            TextView title;
+
+            saveButton = v.findViewById(R.id.saveButton);
+            babyItemName = v.findViewById(R.id.babyItem);
+            babyItemQuantity =v.findViewById(R.id.itemQuantity);
+            babyItemColor=v.findViewById(R.id.itemColor);
+            babyItemSize = v.findViewById(R.id.itemSize);
+            title= v.findViewById(R.id.title);
+
+            title.setText(R.string.edit_item);
+            saveButton.setText(R.string.update_item);
+            babyItemName.setText(newBabyItem.getItemName());
+            babyItemQuantity.setText(String.valueOf(newBabyItem.getItemQuantity()));
+            babyItemColor.setText(newBabyItem.getItemColor());
+            babyItemSize.setText(String.valueOf(newBabyItem.getItemSize()));
+
+         builder.setView(v);
+         alertDialog=builder.create();
+         alertDialog.show();
+            saveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseHandler db = new DatabaseHandler(context);
+                    //Create baby item object
+                    BabyItem item = new BabyItem();
+                    //Get values from EditTextView
+                   newBabyItem.setItemName( babyItemName.getText().toString().trim());
+                   newBabyItem.setItemColor(babyItemColor.getText().toString().trim());
+                    newBabyItem.setItemQuantity(Integer.parseInt(babyItemQuantity.getText().toString().trim()));
+                   newBabyItem.setItemSize(Integer.parseInt(babyItemSize.getText().toString().trim()));
+
+
+                    //Pass view so snackbar would be attached to a view
+                    if (!babyItemName.getText().toString().isEmpty()
+                            && !babyItemColor.getText().toString().isEmpty()
+                            && !babyItemQuantity.getText().toString().isEmpty()
+                            && !babyItemSize.getText().toString().isEmpty()
+                    ) {
+                        db.updateBabyItem(newBabyItem);
+                        notifyItemChanged(getAdapterPosition(),newBabyItem);
+                    } else {
+                        Snackbar.make(v, "Please make sure all fields are filled correctly", Snackbar.LENGTH_SHORT).show();
+                    }
+
+                    //Save item to database
+
+
+                    //Display snackbar after save
+                    Snackbar.make(v, "Item Updated", Snackbar.LENGTH_SHORT).show();
+
+            alertDialog.dismiss();
+
+                }
+            });
+
+
+        }
     }
+
 
 
 }
