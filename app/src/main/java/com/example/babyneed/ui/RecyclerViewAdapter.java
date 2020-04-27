@@ -1,5 +1,6 @@
 package com.example.babyneed.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
   
     private Context context;
     private  List<BabyItem>babyItemList;
+    private AlertDialog.Builder builder;
+    private  AlertDialog alertDialog;
+    private LayoutInflater inflater;
     public RecyclerViewAdapter(Context context, List<BabyItem> babyItemList) {
         this.context = context;
         this.babyItemList= babyItemList;
@@ -56,6 +60,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public TextView itemDate;
         public Button editButton;
         public  Button deleteButton;
+
         public int id;
 
         public ViewHolder(@NonNull View itemView,Context ctx) {
@@ -73,7 +78,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             editButton.setOnClickListener(this);
             deleteButton.setOnClickListener(this);
-
         }
 
         @Override
@@ -87,7 +91,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 case R.id.deleteButton:
                    position = getAdapterPosition();
                    BabyItem item = babyItemList.get(position);
-                  ;
+
                    deleteItem(item.getId());
 
                     break;
@@ -96,12 +100,41 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
 
         }
-        private  void  deleteItem(int babyItemId)
+        private  void  deleteItem(final int babyItemId)
         {
-            DatabaseHandler db = new DatabaseHandler(context);
-            db.deleteBabyItem(babyItemId);
-            babyItemList.remove(getAdapterPosition());
-            notifyItemRemoved(getAdapterPosition());
+            builder = new AlertDialog.Builder(context);
+            inflater = LayoutInflater.from(context);
+
+            View v = inflater.inflate(R.layout.confirmation_pop,null);
+
+           Button noButton = v.findViewById(R.id.confirm_no_button);
+          Button  yesButton = v.findViewById(R.id.confirm_yes_button);
+
+            builder.setView(v);
+            alertDialog = builder.create();
+            alertDialog.show();
+
+            noButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+
+                }
+            });
+            yesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseHandler db = new DatabaseHandler(context);
+                    db.deleteBabyItem(babyItemId);
+                    babyItemList.remove(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
+
+                    alertDialog.dismiss();
+
+                }
+            });
+
+
 
         }
 //        private void editItem() {
