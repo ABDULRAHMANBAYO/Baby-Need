@@ -1,5 +1,7 @@
 package com.example.babyneed;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.babyneed.data.DatabaseHandler;
@@ -7,10 +9,12 @@ import com.example.babyneed.model.BabyItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -31,20 +35,23 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseHandler databaseHandler;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        databaseHandler = new DatabaseHandler(this);
-        //Check if item was saved
-        List<BabyItem>items= databaseHandler.getAllBabyItems();
-        for(BabyItem item:items)
-        {
-            Log.d("SavedItem","Getall"+item.getDateItemAdded());
-        }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        databaseHandler = new DatabaseHandler(this);
+        byPassMainActivity();
+
+
+        //Check if item was saved
+        List<BabyItem> items = databaseHandler.getAllBabyItems();
+        for (BabyItem item : items) {
+            Log.d("SavedItem", "Getall" + item.getDateItemAdded());
+        }
+       
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -58,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void byPassMainActivity() {
+        if(databaseHandler.numberOfBabyItem()>0)
+        {
+            startActivity(new Intent(MainActivity.this, ListActivity.class));
+            finish();
+        }
+    }
+
     private void createPopupDialog() {
         builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.popup, null);
@@ -67,17 +83,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Pass view so snackbar would be attached to a view
-                if(!babyItem.getText().toString().isEmpty()
-                        &&!itemColor.getText().toString().isEmpty()
-                        &&!itemQuantity.getText().toString().isEmpty()
-                        &&!itemSize.getText().toString().isEmpty()
-                ){
+                if (!babyItem.getText().toString().isEmpty()
+                        && !itemColor.getText().toString().isEmpty()
+                        && !itemQuantity.getText().toString().isEmpty()
+                        && !itemSize.getText().toString().isEmpty()
+                ) {
                     saveItem(v);
+                } else {
+                    Snackbar.make(v, "Please make sure all fields are filled correctly", Snackbar.LENGTH_SHORT).show();
                 }
-                else
-                    {
-                        Snackbar.make(v,"Please make sure all fields are filled correctly",Snackbar.LENGTH_SHORT).show();
-                    }
 
             }
         });
@@ -110,7 +124,19 @@ public class MainActivity extends AppCompatActivity {
         databaseHandler.addBabyItem(item);
 
         //Display snackbar after save
-        Snackbar.make(view,"Item Saved",Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(view, "Item Saved", Snackbar.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //code to be run
+                dialog.dismiss();
+                // Move to detail screen
+                startActivity(new Intent(MainActivity.this,ListActivity.class));
+
+            }
+
+        },1200);
     }
 
     @Override
