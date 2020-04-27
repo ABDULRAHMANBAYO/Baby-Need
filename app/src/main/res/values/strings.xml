@@ -14,4 +14,6 @@
     <string name="sure_text">Are you sure you???</string>
     <string name="no">NO</string>
     <string name="yes">YES</string>
+    <string name="update_item">Update Item</string>
+    <string name="edit_item">Edit Item</string>
 </resources>
